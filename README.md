@@ -63,3 +63,8 @@ mkvirtualenv -p python3 xxx
 输入deactivate即可退出虚拟环境
 输入rmvirtualenv xxx删除虚拟环境
 输入workon已存在的虚拟环境
+
+## 解决Mac上安装mysqlclient的错误
+- PATH="$PATH":/usr/local/mysql/bin/
+- mysql_config
+- 之后pip install mysqlclient
