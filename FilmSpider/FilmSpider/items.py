@@ -25,6 +25,11 @@ class FilmItemLoader(ItemLoader):
 
 
 def converTime(value):
+    re_match = re.match('[\S\s]*?(\d+[-]\d+[-]\d+)[\S\s]*', value)
+
+    if re_match:
+        value = re_match.group(1)
+
     try:
         publish_time = datetime.datetime.strptime(value, "%Y-%m-%d").date()
     except Exception as e:
