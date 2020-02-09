@@ -13,20 +13,35 @@ class FilmbtSpider(scrapy.Spider):
 
     def parse(self, response):
         # 进到主页后找到新片精品的更多链接
-        newFilm_url = response.css('#header .bd3rl .co_area2 .title_all em a::attr(href)').extract_first("")
+        new_film_url = response.css('#header .bd3rl .co_area2 .title_all em a::attr(href)').extract_first("")
 
-        if newFilm_url:
+        film_url_list = response.css("#header .bd3rl  .co_area2 .inddline a:nth-child(2)")
+
+        index = 0
+
+        for film_url in film_url_list:
+            url = film_url.css('::attr(href)').extract_first("")
+            yield Request(url=parse.urljoin(response.url, url), callback=self.parse_detail)
+            index = index + 1
+            if index > 15:
+                break
+
+        # if new_film_url:
             # 跳转到新片精品第一页
-            yield Request(url=parse.urljoin(response.url, newFilm_url), callback=self.parse)
-        else:
-            """
-            1. 获取电影列表页中的文章url并交给scrapy下载后并进行解析
-            2. 获取下一页的url并交给scrapy进行下载
-            """
+            # yield Request(url=parse.urljoin(response.url, newFilm_url), callback=self.parse)
+
+            # 直接爬取该页面内容
+
+            # "//*[@id="header"]/div/div[3]/div[2]/div[2]/div[1]/div/div[2]/div[2]/ul/table/tbody/tr[2]/td[1]/a[2]"
+        # else:
+        #     """
+        #     1. 获取电影列表页中的文章url并交给scrapy下载后并进行解析
+        #     2. 获取下一页的url并交给scrapy进行下载
+        #     """
             # 获取电影列表页中的文章url并交给scrapy下载后并进行解析
-            detail_url_list = response.css('#header .bd3r .co_area2 .co_content8 table a::attr(href)').extract()
-            for detail_url in detail_url_list:
-                yield Request(url=parse.urljoin(response.url, detail_url), callback=self.parse_detail)
+            # detail_url_list = response.css('#header .bd3r .co_area2 .co_content8 table a::attr(href)').extract()
+            # for detail_url in detail_url_list:
+            #     yield Request(url=parse.urljoin(response.url, detail_url), callback=self.parse_detail)
 
             # 提取下一页并交给scrapy进行下载
             # page_list = response.css('#header .x a')
@@ -36,8 +51,6 @@ class FilmbtSpider(scrapy.Spider):
             #         next_page_url = page.css('::attr(href)').extract_first()
             #         yield Request(url=parse.urljoin(response.url, next_page_url), callback=self.parse)
             #         break
-
-            print('ok')
 
 
     # 提取文章的具体字段
