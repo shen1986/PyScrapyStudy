@@ -1,10 +1,16 @@
-import re
+# import re
+#
+# testStr = '<br>◎IMDb评分 8.2/10 from 107423 users <br>'
+#
+# re_match = re.match('.*IMDb评分 ?(\d+[.]\d+).*', testStr)
+#
+# if re_match:
+#     print(re_match.group(1))
+#
+# pass
 
-testStr = '<br>◎IMDb评分 8.2/10 from 107423 users <br>'
+import requests
 
-re_match = re.match('.*IMDb评分 ?(\d+[.]\d+).*', testStr)
+response = requests.get("https://www.dytt8.net/")
 
-if re_match:
-    print(re_match.group(1))
-
-pass
+print(response.text)

@@ -100,6 +100,7 @@ class MysqlTwistedPipeline(object):
             magnet, imdb_score,
             douban_score, ftp_address, content)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            ON DUPLICATE KEY UPDATE content=VALUES(content), magnet=VALUES(magnet)
         """
         cursor.execute(insert_sql, (item["title"], item["publish_time"], item["url"], item["url_object_id"],
             item["magnet"], item["imdb_score"],
