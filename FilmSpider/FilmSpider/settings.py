@@ -54,9 +54,11 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'FilmSpider.middlewares.FilmspiderDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   # 'FilmSpider.middlewares.FilmspiderDownloaderMiddleware': 543,
+   'FilmSpider.middlewares.rotate_user_agent.RandomUserAgentMiddleware': 400,
+
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -75,6 +77,11 @@ ITEM_PIPELINES = {
 IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))
 IMAGES_STORE = os.path.join(project_dir, "images")
+
+# 追加参照环境(把FilmSpider加到参照环境中)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 打印出我追加的参照环境
+print (os.path.join(BASE_DIR, 'FilmSpider'))
 
 # IMAGES_MIN_HEIGHT = 100
 # IMAGES_MIN_WIDTH = 100

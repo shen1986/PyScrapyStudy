@@ -2,9 +2,8 @@
 import scrapy
 from scrapy.http import Request
 from urllib import parse
-from FilmSpider.items import DyttFilmItem, FilmItemLoader
-from FilmSpider.utils.common import get_md5
-
+from items import DyttFilmItem, FilmItemLoader
+from utils.common import get_md5
 
 class FilmbtSpider(scrapy.Spider):
     name = 'filmBt'
