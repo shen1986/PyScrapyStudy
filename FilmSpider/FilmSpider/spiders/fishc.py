@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 try:
     import urlparse as parse
 except:
@@ -25,10 +26,38 @@ class FishcSpider(scrapy.Spider):
         提取出html页面中的所有url 并跟踪这些url进行一步爬取
         如果提取的url中格式为 /question/xxx 就下载之后直接进入解析函数
         """
-        all_urls = response.css("table a::attr(href)").extract()
-        all_urls = list([parse.urljoin(response.url, url) for url in all_urls])
-        all_urls = list(filter(lambda x: True if x.startswith("https") else False, all_urls))
-        print(all_urls)
+        str = response.css("#postmessage_2051388").extract()[0]
+        lines = str.split("<br>")
+        resultList = []
+
+        for line in lines:
+            pattern = re.compile(r'.*<strong>(.*?)</strong>.*')
+            titleResult = pattern.findall(line)
+
+            if titleResult:
+                print(titleResult)
+                resultList.append({"title": titleResult[0]})
+
+            pattern = re.compile(r'.*<a href="(.*?)" target.*')
+            addrResult = pattern.findall(line)
+
+            if addrResult:
+                if "addrList" in resultList[len(resultList) - 1]:
+                    resultList[len(resultList) - 1]["addrList"].append({"address": addrResult[0]})
+                else:
+                    resultList[len(resultList) - 1]["addrList"] = [
+                        {"address": addrResult[0]}
+                    ]
+
+            pattern = re.compile(r'.*密码：(.*?)$')
+            passResult = pattern.findall(line)
+
+            if passResult:
+                resultList[len(resultList) - 1]["addrList"][len(resultList[len(resultList) - 1]["addrList"]) - 1][
+                    "password"] = \
+                    passResult[0]
+
+        print(resultList)
         # all_urls = [parse.urljoin(response.url, url) for url in all_urls]
         # all_urls = filter(lambda x:True if x.startswith("https") else False, all_urls)
 
