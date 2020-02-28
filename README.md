@@ -68,3 +68,6 @@ mkvirtualenv -p python3 xxx
 - PATH="$PATH":/usr/local/mysql/bin/
 - mysql_config
 - 之后pip install mysqlclient
+
+## 要用 pip 安装指定版本的 Python 包，只需通过 == 操作符 指定
+pip install robotframework==2.8.7

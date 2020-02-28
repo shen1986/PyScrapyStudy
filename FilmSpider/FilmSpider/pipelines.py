@@ -88,23 +88,17 @@ class MysqlTwistedPipeline(object):
         # 使用twisted将mysql插入变成异步执行
         query = self.dbpool.runInteraction(self.do_insert, item)
         query.addErrback(self.handle_error, item, spider) # 处理异常
+        return item
 
     def handle_error(self, failure, item, spider):
         # 处理异步插入的异常
         print(failure)
 
     def do_insert(self, cursor, item):
-        # 执行具体的插入逻辑
-        insert_sql = """
-            INSERT INTO film (title, publish_time, url, url_object_id,
-            magnet, imdb_score,
-            douban_score, ftp_address, content)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            ON DUPLICATE KEY UPDATE content=VALUES(content), magnet=VALUES(magnet)
-        """
-        cursor.execute(insert_sql, (item["title"], item["publish_time"], item["url"], item["url_object_id"],
-            item["magnet"], item["imdb_score"],
-            item["douban_score"], item["ftp_address"], item["content"]) )
+        # 执行具体的插入
+        # 根据不同的item 构建不同的sql语句并插入到mysql中
+        insert_sql, params = item.get_insert_sql()
+        cursor.execute(insert_sql, params)
 
 class FilmImagePipeline(ImagesPipeline):
     def item_completed(self, results, item, info):
@@ -113,4 +107,11 @@ class FilmImagePipeline(ImagesPipeline):
                 image_file_path = value["path"]
             item["front_image_path"] = image_file_path
 
+        return item
+
+class ElasticsearchPipeline(object):
+    # 将数据写入到es中
+    def process_item(self, item, spider):
+        #将item转换为es的数据
+        item.save_to_es()
         return item
